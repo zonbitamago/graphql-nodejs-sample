@@ -4,16 +4,19 @@ const { buildSchema } = require("graphql");
 
 const schema = buildSchema(`
     type Query{
-        course(id: Int!): Course
-        courses(topic: String): [Course]
+      course(id: Int!): Course
+      courses(topic: String): [Course]
     },
+    type Mutation{
+      updateCourseTopic(id: Int!, topic: String!): Course
+    }
     type Course{
-        id: Int
-        title: String
-        author: String
-        description: String
-        topic: String
-        url: String
+      id: Int
+      title: String
+      author: String
+      description: String
+      topic: String
+      url: String
     }
 `);
 
@@ -47,7 +50,7 @@ const coursesData = [
   }
 ];
 
-var getCourse = args => {
+const getCourse = args => {
   const id = args.id;
 
   return coursesData.filter(course => {
@@ -55,7 +58,7 @@ var getCourse = args => {
   })[0];
 };
 
-var getCourses = args => {
+const getCourses = args => {
   if (args.topic) {
     const topic = args.topic;
     return coursesData.filter(course => {
@@ -66,9 +69,22 @@ var getCourses = args => {
   }
 };
 
+const updateCourseTopic = ({ id, topic }) => {
+  coursesData.map(course => {
+    if (course.id === id) {
+      course.topic = topic;
+      return course;
+    }
+  });
+  return coursesData.filter(course => {
+    return course.id === id;
+  })[0];
+};
+
 const root = {
   course: getCourse,
-  courses: getCourses
+  courses: getCourses,
+  updateCourseTopic: updateCourseTopic
 };
 
 const app = express();
