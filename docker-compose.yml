@@ -6,3 +6,9 @@ services:
     tty: true
     ports:
       - 4000:4000
+  client:
+    build: client
+    container_name: client
+    tty: true
+    ports:
+      - 3000:3000
