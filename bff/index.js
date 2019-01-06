@@ -1,25 +1,20 @@
 const express = require("express");
-const express_graphql = require("express-graphql");
-const { buildSchema } = require("graphql");
+const { ApolloServer, gql } = require("apollo-server-express");
 const cors = require("cors");
 
-const schema = buildSchema(`
-    type Query{
-      course(id: Int!): Course
-      courses(topic: String): [Course]
-    },
-    type Mutation{
-      updateCourseTopic(id: Int!, topic: String!): Course
-    }
-    type Course{
-      id: Int
-      title: String
-      author: String
-      description: String
-      topic: String
-      url: String
-    }
-`);
+const typeDefs = gql`
+  type Query {
+    courses(topic: String): [Course]
+  }
+  type Course {
+    id: Int
+    title: String
+    author: String
+    description: String
+    topic: String
+    url: String
+  }
+`;
 
 const coursesData = [
   {
@@ -51,16 +46,10 @@ const coursesData = [
   }
 ];
 
-const getCourse = args => {
-  const id = args.id;
-
-  return coursesData.filter(course => {
-    return course.id === id;
-  })[0];
-};
-
 const getCourses = args => {
-  if (args.topic) {
+  console.log("args:", args);
+
+  if (args != undefined && args.topic) {
     const topic = args.topic;
     return coursesData.filter(course => {
       return course.topic === topic;
@@ -70,41 +59,18 @@ const getCourses = args => {
   }
 };
 
-const updateCourseTopic = ({ id, topic }) => {
-  coursesData.map(course => {
-    if (course.id === id) {
-      course.topic = topic;
-      return course;
-    }
-  });
-  return coursesData.filter(course => {
-    return course.id === id;
-  })[0];
+const resolvers = {
+  Query: { courses: (parent, args) => getCourses(args) }
 };
 
-const root = {
-  course: getCourse,
-  courses: getCourses,
-  updateCourseTopic: updateCourseTopic
-};
+const server = new ApolloServer({ typeDefs, resolvers });
 
 const app = express();
-
 app.use(cors());
 
-app.use(
-  "/graphql",
-  express_graphql({
-    schema: schema,
-    rootValue: root,
-    graphiql: true
-  })
-);
+server.applyMiddleware({ app });
 
-const port = 5000;
-
-app.listen(port, () =>
-  console.log(
-    `Express GraphQL Server Now Running On http://localhost:${port}/graphql`
-  )
-);
+const port = 4000;
+app.listen(port, () => {
+  console.log(`Access to http://localhost:${port}${server.graphqlPath}`);
+});

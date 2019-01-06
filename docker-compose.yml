@@ -5,6 +5,12 @@ services:
     container_name: server
     tty: true
     ports:
+      - 5000:5000
+  bff:
+    build: bff
+    container_name: bff
+    tty: true
+    ports:
       - 4000:4000
   client:
     build: client
