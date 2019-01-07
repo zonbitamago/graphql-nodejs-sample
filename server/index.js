@@ -1,25 +1,6 @@
 const express = require("express");
-const express_graphql = require("express-graphql");
-const { buildSchema } = require("graphql");
+const morgan = require("morgan");
 const cors = require("cors");
-
-const schema = buildSchema(`
-    type Query{
-      course(id: Int!): Course
-      courses(topic: String): [Course]
-    },
-    type Mutation{
-      updateCourseTopic(id: Int!, topic: String!): Course
-    }
-    type Course{
-      id: Int
-      title: String
-      author: String
-      description: String
-      topic: String
-      url: String
-    }
-`);
 
 const coursesData = [
   {
@@ -51,60 +32,22 @@ const coursesData = [
   }
 ];
 
-const getCourse = args => {
-  const id = args.id;
-
-  return coursesData.filter(course => {
-    return course.id === id;
-  })[0];
-};
-
-const getCourses = args => {
-  if (args.topic) {
-    const topic = args.topic;
-    return coursesData.filter(course => {
-      return course.topic === topic;
-    });
-  } else {
-    return coursesData;
-  }
-};
-
-const updateCourseTopic = ({ id, topic }) => {
-  coursesData.map(course => {
-    if (course.id === id) {
-      course.topic = topic;
-      return course;
-    }
-  });
-  return coursesData.filter(course => {
-    return course.id === id;
-  })[0];
-};
-
-const root = {
-  course: getCourse,
-  courses: getCourses,
-  updateCourseTopic: updateCourseTopic
-};
-
 const app = express();
 
+app.use(morgan("short"));
 app.use(cors());
 
-app.use(
-  "/graphql",
-  express_graphql({
-    schema: schema,
-    rootValue: root,
-    graphiql: true
-  })
-);
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.get("/coursesData", (req, res) => {
+  res.json({
+    coursesData: coursesData
+  });
+});
 
 const port = 5000;
-
-app.listen(port, () =>
-  console.log(
-    `Express GraphQL Server Now Running On http://localhost:${port}/graphql`
-  )
-);
+app.listen(port, () => {
+  console.log(`Access to http://localhost:${port}`);
+});
