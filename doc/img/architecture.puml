@@ -1,0 +1,30 @@
+@startuml architecture
+    title GraphQL as Backens For Frontends
+
+    agent browser[
+        Browser
+    ]
+
+    package Docker{
+        frame "Backends For Frontends"{
+            agent graphql[
+                GraphQL-Server
+            ]
+        }
+
+        frame "container2"{
+            agent nodejs[
+                API-Server
+            ]
+        }
+    }
+
+    cloud web [
+        Web
+    ]
+
+    browser -r- web
+    web -r- graphql
+    graphql -- nodejs
+
+@enduml
