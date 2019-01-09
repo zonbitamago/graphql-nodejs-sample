@@ -9,8 +9,8 @@ GraphQL-Server のサンプル実装。GraphQL-Server を BFF として利用。
 
 ![architecture](https://raw.githubusercontent.com/zonbitamago/graphql-nodejs-sample/master/doc/img/architecture.png)
 
-This code is sample of GraphQL-Server as BFF. Each components is made by following technorogies.  
-このコードは GraphQL-Server を BFF として実装したサンプル実装です。各々の  コンポーネントは以下を利用して作られています。
+This code is sample of GraphQL-Server as BFF. Each components is made by following technorogies.  
+このコードは GraphQL-Server を BFF として実装したサンプル実装です。各々のコンポーネントは以下を利用して作られています。
 
 - React.js (Browser)
 - Apollo-Client (Browser)
